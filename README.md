@@ -1,14 +1,14 @@
 # VIRL
 VIRL Lab 
 
-Most of use vendor :
+Software used in labs :
   - Cumulus VX
   - GoBGP
   - Bird 
   - Mikrotik
   - Cisco of course ! 
   
-Most of tech studied :
+Most studied technology :
   - OSPF
   - IS-IS
   - [MP]-BGP
@@ -17,7 +17,7 @@ Most of tech studied :
   - VXLAN
   - DMVPN
   
-  For use my topologies you need to add vendor specific software into VIRL for do this my best source as :
+For use my topologies you need to add vendor specific software into VIRL for do this my best source as :
   
   http://sig9.hatenablog.com/archive/category/VIRL (Thanks to you, if you have a name, don't hesitate to send by MP)
   
