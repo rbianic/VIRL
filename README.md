@@ -8,7 +8,7 @@ Software used in labs :
   - Mikrotik
   - Cisco of course ! 
   
-Most studied technology :
+Most studied technologies :
   - OSPF
   - IS-IS
   - [MP]-BGP
