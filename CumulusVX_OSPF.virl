@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<topology xmlns="http://www.cisco.com/VIRL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="0.95" xsi:schemaLocation="http://www.cisco.com/VIRL https://raw.github.com/CiscoVIRL/schema/v0.95/virl.xsd">
+    <extensions>
+        <entry key="management_network" type="String">flat</entry>
+    </extensions>
+    <node name="cumulusvx-1" type="SIMPLE" subtype="CumulusVX" location="386,146">
+        <extensions>
+            <entry key="config" type="String">#!/bin/bash&#xD;
+&#xD;
+# vars&#xD;
+IP="10.0.0.1"&#xD;
+HOSTNAME="cumulusvx-1"&#xD;
+&#xD;
+# test touch&#xD;
+touch /tmp/cumulusvx-config&#xD;
+&#xD;
+# add VIRL user&#xD;
+useradd -m cisco -s /bin/bash&#xD;
+echo "cisco:cisco" | chpasswd&#xD;
+addgroup cisco sudo&#xD;
+&#xD;
+# set hostname&#xD;
+echo "$IP	$HOSTNAME" &gt;&gt;/etc/hosts&#xD;
+echo "$HOSTNAME" &gt;/etc/hostname&#xD;
+hostname $HOSTNAME&#xD;
+&#xD;
+# add network interface config&#xD;
+cat &lt;&lt; EOF &gt;&gt;/etc/network/interfaces&#xD;
+&#xD;
+auto lo:1&#xD;
+iface lo:1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto swp1&#xD;
+iface swp1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto swp2&#xD;
+iface swp2&#xD;
+address $IP/32&#xD;
+EOF&#xD;
+&#xD;
+ifup -a&#xD;
+&#xD;
+# add ospf daemon to quagga&#xD;
+sed -i.bak -e s/"ospfd=no"/"ospfd=yes"/g /etc/quagga/daemons&#xD;
+sed -i.bak -e s/"zebra=no"/"zebra=yes"/g /etc/quagga/daemons&#xD;
+service quagga restart&#xD;
+&#xD;
+# add quagga config&#xD;
+cat &lt;&lt; EOF &gt; /etc/quagga/Quagga.conf&#xD;
+hostname $HOSTNAME&#xD;
+log file /var/log/quagga/ospfd.log&#xD;
+log timestamp precision 6&#xD;
+username cumulus nopassword&#xD;
+!&#xD;
+service integrated-vtysh-config&#xD;
+!&#xD;
+password cn321&#xD;
+enable password cn321&#xD;
+!&#xD;
+interface swp1&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+interface swp2&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+router ospf&#xD;
+ ospf router-id $IP&#xD;
+ network $IP/32 area 0.0.0.0&#xD;
+!&#xD;
+line vty&#xD;
+!&#xD;
+EOF&#xD;
+&#xD;
+service quagga restart</entry>
+        </extensions>
+        <interface id="0" name="swp1"/>
+        <interface id="1" name="swp2"/>
+    </node>
+    <node name="cumulusvx-2" type="SIMPLE" subtype="CumulusVX" location="629,146">
+        <extensions>
+            <entry key="config" type="String">#!/bin/bash&#xD;
+&#xD;
+# vars&#xD;
+IP="10.0.0.2"&#xD;
+HOSTNAME="cumulusvx-2"&#xD;
+&#xD;
+# test touch&#xD;
+touch /tmp/cumulusvx-config&#xD;
+&#xD;
+# add VIRL user&#xD;
+useradd -m cisco -s /bin/bash&#xD;
+echo "cisco:cisco" | chpasswd&#xD;
+addgroup cisco sudo&#xD;
+&#xD;
+# set hostname&#xD;
+echo "$IP	$HOSTNAME" &gt;&gt;/etc/hosts&#xD;
+echo "$HOSTNAME" &gt;/etc/hostname&#xD;
+hostname $HOSTNAME&#xD;
+&#xD;
+# add network interface config&#xD;
+cat &lt;&lt; EOF &gt;&gt;/etc/network/interfaces&#xD;
+&#xD;
+auto lo:1&#xD;
+iface lo:1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto swp1&#xD;
+iface swp1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto swp2&#xD;
+iface swp2&#xD;
+address $IP/32&#xD;
+EOF&#xD;
+&#xD;
+ifup -a&#xD;
+&#xD;
+# add ospf daemon to quagga&#xD;
+sed -i.bak -e s/"ospfd=no"/"ospfd=yes"/g /etc/quagga/daemons&#xD;
+sed -i.bak -e s/"zebra=no"/"zebra=yes"/g /etc/quagga/daemons&#xD;
+service quagga restart&#xD;
+&#xD;
+# add quagga config&#xD;
+cat &lt;&lt; EOF &gt; /etc/quagga/Quagga.conf&#xD;
+hostname $HOSTNAME&#xD;
+log file /var/log/quagga/ospfd.log&#xD;
+log timestamp precision 6&#xD;
+username cumulus nopassword&#xD;
+!&#xD;
+service integrated-vtysh-config&#xD;
+!&#xD;
+password cn321&#xD;
+enable password cn321&#xD;
+!&#xD;
+interface swp1&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+interface swp2&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+router ospf&#xD;
+ ospf router-id $IP&#xD;
+ network $IP/32 area 0.0.0.0&#xD;
+!&#xD;
+line vty&#xD;
+!&#xD;
+EOF&#xD;
+&#xD;
+service quagga restart</entry>
+        </extensions>
+        <interface id="0" name="swp1"/>
+        <interface id="1" name="swp2"/>
+    </node>
+    <node name="cumulusvx-3" type="SIMPLE" subtype="CumulusVX" location="629,275">
+        <extensions>
+            <entry key="config" type="String">#!/bin/bash&#xD;
+&#xD;
+# vars&#xD;
+IP="10.0.0.3"&#xD;
+LEAF_IP="10.21.0.1"&#xD;
+HOSTNAME="cumulusvx-3"&#xD;
+&#xD;
+# test touch&#xD;
+touch /tmp/cumulusvx-config&#xD;
+&#xD;
+# add VIRL user&#xD;
+useradd -m cisco -s /bin/bash&#xD;
+echo "cisco:cisco" | chpasswd&#xD;
+addgroup cisco sudo&#xD;
+&#xD;
+# set hostname&#xD;
+echo "$IP	$HOSTNAME" &gt;&gt;/etc/hosts&#xD;
+echo "$HOSTNAME" &gt;/etc/hostname&#xD;
+hostname $HOSTNAME&#xD;
+&#xD;
+# add network interface config&#xD;
+cat &lt;&lt; EOF &gt;&gt;/etc/network/interfaces&#xD;
+&#xD;
+auto lo:1&#xD;
+iface lo:1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto lo:2&#xD;
+iface lo:2&#xD;
+address $LEAF_IP/24&#xD;
+&#xD;
+auto swp1&#xD;
+iface swp1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto swp2&#xD;
+iface swp2&#xD;
+address $IP/32&#xD;
+EOF&#xD;
+&#xD;
+ifup -a&#xD;
+&#xD;
+# add ospf daemon to quagga&#xD;
+sed -i.bak -e s/"ospfd=no"/"ospfd=yes"/g /etc/quagga/daemons&#xD;
+sed -i.bak -e s/"zebra=no"/"zebra=yes"/g /etc/quagga/daemons&#xD;
+service quagga restart&#xD;
+&#xD;
+# add quagga config&#xD;
+cat &lt;&lt; EOF &gt; /etc/quagga/Quagga.conf&#xD;
+hostname $HOSTNAME&#xD;
+log file /var/log/quagga/ospfd.log&#xD;
+log timestamp precision 6&#xD;
+username cumulus nopassword&#xD;
+!&#xD;
+service integrated-vtysh-config&#xD;
+!&#xD;
+password cn321&#xD;
+enable password cn321&#xD;
+!&#xD;
+interface swp1&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+interface swp2&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+router ospf&#xD;
+ ospf router-id $IP&#xD;
+ network $IP/32 area 0.0.0.0&#xD;
+ network $LEAF_IP/24 area 0.0.0.0&#xD;
+!&#xD;
+line vty&#xD;
+!&#xD;
+EOF&#xD;
+&#xD;
+service quagga restart</entry>
+        </extensions>
+        <interface id="0" name="swp1"/>
+        <interface id="1" name="swp2"/>
+    </node>
+    <node name="cumulusvx-4" type="SIMPLE" subtype="CumulusVX" location="386,275">
+        <extensions>
+            <entry key="config" type="String">#!/bin/bash&#xD;
+&#xD;
+# vars&#xD;
+IP="10.0.0.4"&#xD;
+LEAF_IP="10.11.0.1"&#xD;
+HOSTNAME="cumulusvx-4"&#xD;
+&#xD;
+# test touch&#xD;
+touch /tmp/cumulusvx-config&#xD;
+&#xD;
+# add VIRL user&#xD;
+useradd -m cisco -s /bin/bash&#xD;
+echo "cisco:cisco" | chpasswd&#xD;
+addgroup cisco sudo&#xD;
+&#xD;
+# set hostname&#xD;
+echo "$IP	$HOSTNAME" &gt;&gt;/etc/hosts&#xD;
+echo "$HOSTNAME" &gt;/etc/hostname&#xD;
+hostname $HOSTNAME&#xD;
+&#xD;
+# add network interface config&#xD;
+cat &lt;&lt; EOF &gt;&gt;/etc/network/interfaces&#xD;
+&#xD;
+auto lo:1&#xD;
+iface lo:1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto lo:2&#xD;
+iface lo:2&#xD;
+address $LEAF_IP/24&#xD;
+&#xD;
+auto swp1&#xD;
+iface swp1&#xD;
+address $IP/32&#xD;
+&#xD;
+auto swp2&#xD;
+iface swp2&#xD;
+address $IP/32&#xD;
+EOF&#xD;
+&#xD;
+ifup -a&#xD;
+&#xD;
+# add ospf daemon to quagga&#xD;
+sed -i.bak -e s/"ospfd=no"/"ospfd=yes"/g /etc/quagga/daemons&#xD;
+sed -i.bak -e s/"zebra=no"/"zebra=yes"/g /etc/quagga/daemons&#xD;
+service quagga restart&#xD;
+&#xD;
+# add quagga config&#xD;
+cat &lt;&lt; EOF &gt; /etc/quagga/Quagga.conf&#xD;
+hostname $HOSTNAME&#xD;
+log file /var/log/quagga/ospfd.log&#xD;
+log timestamp precision 6&#xD;
+username cumulus nopassword&#xD;
+!&#xD;
+service integrated-vtysh-config&#xD;
+!&#xD;
+password cn321&#xD;
+enable password cn321&#xD;
+!&#xD;
+interface swp1&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+interface swp2&#xD;
+ ip ospf network point-to-point&#xD;
+!&#xD;
+router ospf&#xD;
+ ospf router-id $IP&#xD;
+ network $IP/32 area 0.0.0.0&#xD;
+ network $LEAF_IP/24 area 0.0.0.0&#xD;
+!&#xD;
+line vty&#xD;
+!&#xD;
+EOF&#xD;
+&#xD;
+service quagga restart</entry>
+        </extensions>
+        <interface id="0" name="swp1"/>
+        <interface id="1" name="swp2"/>
+    </node>
+    <annotations/>
+    <connection dst="/virl:topology/virl:node[4]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[3]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[3]/virl:interface[2]" src="/virl:topology/virl:node[2]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[4]/virl:interface[2]" src="/virl:topology/virl:node[2]/virl:interface[2]"/>
+</topology>
